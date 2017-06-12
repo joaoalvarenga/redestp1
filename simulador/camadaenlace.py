@@ -61,7 +61,7 @@ class CamadaEnlace(object):
 
         return frame
 
-    def gerar_msg(self):
+    def gerar_frame(self):
         """
         Gera a mensagem original
         :return(list[int]): Retorna a mensagem original 

@@ -9,20 +9,61 @@
 '''
 
 import socket
+from threading import Thread
+
+from datetime import datetime
 
 class CamadaFisica(object):
+
     def __init__(self, transporte, host, port):
-        if transporte == 'UDP':
-            self.__socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM) # incializa o socket usando UDP na camada de transporte
-        else:
-            self.__socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # inicializa o socket usandp TCP na camada de transporte
+        self.__transporte = transporte
+        self.__host = host
+        self.__port = port
+        tipo_socket = {'UDP': socket.SOCK_DGRAM, 'TCP': socket.SOCK_STREAM}
+        self.__socket = socket.socket(socket.AF_INET, tipo_socket[transporte])
 
-    def servir(self, host, port):
-        self.__socket.bind((host,port))
+    def servir(self):
+        self.__socket.bind((self.__host,self.__port))
 
-    def receber_msg(self):
-        msg, client = self.__socket.recvfrom(1024)
-        pass
+        if self.__transporte == 'TCP':
+            self.__socket.listen(1)
+            return self.__servir_tcp()
+
+        return self.__servir_udp()
+
+    def __receber_msg_tcp(self, conexao, cliente):
+        while True:
+            msg = conexao.recv(1024)
+            if not msg:
+                break
+            print("[{}] {} - {}".format(datetime.now(), cliente, msg))
+        conexao.close()
+
+    def __servir_tcp(self):
+        threads = []
+        while True:
+            conexao, cliente = self.__socket.accept()
+            thread = Thread(target=self.__receber_msg_tcp, args=(conexao, cliente))
+            thread.start()
+            threads.append(thread)
+
+    def __servir_udp(self):
+        while True:
+            self.__receber_msg_udp()
+
+    def __receber_msg_udp(self):
+        msg, cliente = self.__socket.recvfrom(1024)
+        print("[{}] {} - {}".format(datetime.now(), cliente, msg))
+
+    def __enviar_tcp(self, msg):
+        self.__socket.send(msg)
+
+    def __enviar_udp(self, msg):
+        self.__socket.sendto(msg, (self.__host, self.__port))
 
     def enviar_msg(self, msg):
-        pass
+        if self.__transporte == 'TCP':
+            return self.__enviar_tcp(msg)
+
+        return self.__enviar_udp(msg)
+
