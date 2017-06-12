@@ -1,21 +1,24 @@
 # -*- coding: utf-8 -*-
-'''
+"""
     File name: main.py
-	Author: Daniela Pralon, João Paulo Reis Alvarenga, Manoel Stilpen, Marina Lima, Patrick Rosa, Eduardo Andrews
+    Author: Daniela Pralon, Eduardo Andrews, João Paulo Reis Alvarenga, Manoel Stilpen, Marina Lima, Patrick Rosa
     Date created: 5/30/2017
-    Data last modified: 5/30/2017
+    Data last modified: 6/12/2017
     Python version: 2.7
     License: GPL
-'''
+"""
 
-from simulador.camadafisica import CamadaFisica
-from simulador.camadaenlace import CamadaEnlace
+from simulador import CamadaFisica
+from simulador import CamadaEnlace
 
 from threading import Thread
 from time import sleep
 
 
 class Servidor(Thread):
+    """
+    Thread para simular um servidor
+    """
     def __init__(self, tipo, porta):
         Thread.__init__(self)
         self.__camadafisica = CamadaFisica(tipo, '127.0.0.1', porta)
@@ -25,6 +28,9 @@ class Servidor(Thread):
 
 
 class Cliente(Thread):
+    """
+    Thread para simular um cliente
+    """
     def __init__(self, tipo, endereco, porta):
         Thread.__init__(self)
         self.__camadafisica = CamadaFisica(tipo, endereco, porta)
@@ -45,3 +51,6 @@ if __name__ == '__main__':
 
     thread_servidor.start()
     thread_cliente.start()
+
+    thread_cliente.join()
+    thread_servidor.join()

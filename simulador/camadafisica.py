@@ -1,22 +1,23 @@
 # -*- coding: utf-8 -*-
-'''
+"""
     File name: camadafisica.py
-    Author: Daniela Pralon, João Paulo Reis Alvarenga, Manoel Stilpen, Marina Lima, Patrick Rosa, Eduardo Andrews
+    Author: Daniela Pralon, Eduardo Andrews, João Paulo Reis Alvarenga, Manoel Stilpen, Marina Lima, Patrick Rosa
     Date created: 5/30/2017
-    Data last modified: 5/30/2017
+    Data last modified: 6/30/2017
     Python version: 2.7
     License: GPL
-'''
+"""
 
 import socket
 from threading import Thread
-
 from datetime import datetime
+
 
 class CamadaFisica(object):
     """
     Simulação da camada física, responsável por controlar as mensagens
     """
+
     def __init__(self, transporte, host, porta):
         """
         Função init da classe
@@ -36,7 +37,7 @@ class CamadaFisica(object):
         Mantem a camada servindo, funcionando como um servidor
         :return: None
         """
-        self.__socket.bind((self.__host,self.__porta))
+        self.__socket.bind((self.__host, self.__porta))
 
         if self.__transporte == 'TCP':
             self.__socket.listen(1)
@@ -112,4 +113,3 @@ class CamadaFisica(object):
             return self.__enviar_tcp(msg)
 
         return self.__enviar_udp(msg)
-
