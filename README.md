@@ -1,5 +1,16 @@
 # Simulador da Redes
 ## Design Pattern
+Os imports são feitos de ordem alfabética e os imports da bibliotecas são sempre os últimos
+```python
+import random
+import socket
+
+from random import choice, randint, random
+
+from simulador import CamadaEnlace
+from simulador import CamadaFisica
+```
+
 Nome para funções e variáveis:
 ```python
 def nome_da_funcao():  
