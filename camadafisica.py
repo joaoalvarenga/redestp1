@@ -17,12 +17,12 @@ class CamadaFisica(object):
         else:
             self.__socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # inicializa o socket usandp TCP na camada de transporte
 
-    def servir(host, port):
+    def servir(self, host, port):
         self.__socket.bind((host,port))
 
-    def receber_msg():
+    def receber_msg(self):
         msg, client = self.__socket.recvfrom(1024)
         print cliente, msg
 
-    def enviar_msg(msg):
+    def enviar_msg(self, msg):
         pass
