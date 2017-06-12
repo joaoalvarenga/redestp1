@@ -22,7 +22,7 @@ class CamadaFisica(object):
 
     def receber_msg(self):
         msg, client = self.__socket.recvfrom(1024)
-        print cliente, msg
+        print client, msg
 
     def enviar_msg(self, msg):
         pass

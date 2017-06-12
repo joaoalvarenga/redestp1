@@ -8,10 +8,9 @@
     License: GPL
 '''
 
-from camadafisica import CamadaFisica
-from camadaenlace import CamadaEnlace
-
+from simulador.camadafisica import CamadaFisica
+from simulador.camadaenlace import CamadaEnlace
 
 camada_fisica = CamadaFisica('UDP', '127.0.0.1', '666')
-camada_enlace = CamadaEnlace(0.1, 0.01, 0.01, 32)
+camada_enlace = CamadaEnlace(0.1, 0.01, 0.01, 32, (1,10))
 print(camada_enlace.gerar_msg())
