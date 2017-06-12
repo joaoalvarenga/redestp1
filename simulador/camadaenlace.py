@@ -10,6 +10,9 @@
 from random import random, randint, choice
 
 class CamadaEnlace(object):
+    """
+    Simulação da Camada de Enlace, responsável por gerar os quadros e gerar os ruídos nas mensagens
+    """
     def __init__(self, prob_inversao, prob_adicao, prob_rajada, tamanho_frame, intervalo_rajada):
         """
         Função de Init da classe
