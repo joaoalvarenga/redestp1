@@ -34,7 +34,7 @@ class Cliente(Thread):
     def __init__(self, tipo, endereco, porta):
         Thread.__init__(self)
         self.__camadafisica = CamadaFisica(tipo, endereco, porta)
-        self.__camadaenlace = CamadaEnlace(0.1, 0.01, 0.01, 32, (1, 10))
+        self.__camadaenlace = CamadaEnlace(0.1, 0.01, 0.01, 32, (10, 20))
 
     def run(self):
         while True:

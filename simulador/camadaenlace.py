@@ -87,5 +87,5 @@ class CamadaEnlace(object):
         for bit in frame_prob_inversao:
             frame_prob_adiconar += self.__adicionar_bit(bit)  # aplica ruido de adição
 
-        frame_final = frame_prob_adiconar
+        frame_final = self.__aplicar_rajada(frame_prob_adiconar)
         return frame_final

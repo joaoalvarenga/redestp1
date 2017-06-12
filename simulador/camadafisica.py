@@ -56,7 +56,7 @@ class CamadaFisica(object):
             msg = conexao.recv(1024)
             if not msg:
                 break
-            print("[{}] {} - {}".format(datetime.now(), cliente, msg))
+            print("[Servidor][{}] {} - {} - [{}]".format(datetime.now(), cliente, msg, len(msg)))
         conexao.close()
 
     def __servir_tcp(self):
@@ -85,7 +85,7 @@ class CamadaFisica(object):
         :return: None
         """
         msg, cliente = self.__socket.recvfrom(1024)
-        print("[{}] {} - {}".format(datetime.now(), cliente, msg))
+        print("[Servidor][{}] {} - {} - [{}]".format(datetime.now(), cliente, msg, len(msg)))
 
     def __enviar_tcp(self, msg):
         """
@@ -109,6 +109,7 @@ class CamadaFisica(object):
         :param msg: Mensagem a ser enviada
         :return: None
         """
+        print("[Cliente][{}] - {} - [{}]".format(datetime.now(), msg, len(msg)))
         if self.__transporte == 'TCP':
             return self.__enviar_tcp(msg)
 
