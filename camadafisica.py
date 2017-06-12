@@ -1,6 +1,7 @@
+# -*- coding: utf-8 -*-
 '''
     File name: camadafisica.py
-    Author: Daniela Pralon, João Paulo Reis Alvarenga, Manoel Stilpen, Marina Lima, Patrick Rosa
+    Author: Daniela Pralon, Joao Paulo Reis Alvarenga, Manoel Stilpen, Marina Lima, Patrick Rosa
     Date created: 5/30/2017
     Data last modified: 5/30/2017
     Python version: 2.7
@@ -20,8 +21,8 @@ class CamadaFisica(object):
         self.__socket.bind((host,port))
 
     def receber_msg():
-        # implementacao
-        pass
+        msg, client = self.__socket.recvfrom(1024)
+        print cliente, msg
 
-    def enviar_msg():
-        # implementacao
+    def enviar_msg(msg):
+        pass
