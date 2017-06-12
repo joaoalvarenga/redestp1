@@ -7,7 +7,6 @@ def nome_da_funcao():
 ```
 Nome para classes(CamelCase): 
 ```python
- 
 class NomeDaClasse(object):
 ```
 Variáveis e Funções por escopo:
@@ -52,3 +51,5 @@ def divisao(a,b):
         return
     print("O resultado da divisão {}/{}={}".format(a,b,a/float(b)))
 ```
+## Como contribuir
+Dê um fork no repositório e faça pull requests, espere até quem alguém aprove seu pull request.  
