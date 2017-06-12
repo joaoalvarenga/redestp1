@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 '''
     File name: camadaenlace.py
-    Author: Daniela Pralon, Joao Paulo Reis Alvarenga, Manoel Stilpen, Marina Lima, Patrick Rosa
+    Author: Daniela Pralon, João Paulo Reis Alvarenga, Manoel Stilpen, Marina Lima, Patrick Rosa, Eduardo Andrews
     Date created: 5/30/2017
     Data last modified: 5/30/2017
     Python version: 2.7
@@ -25,7 +25,7 @@ class CamadaEnlace(object):
         self.__prob_rajada = prob_rajada # probabilidade da rajada
         self.__tamanho_frame = tamanho_frame # tamanho do quadro
         self.__intervalo_rajada = intervalo_rajada
-
+        
     def __inverter_bit(self, bit): # inversor de bit
         """
         Inverte o bit caso caia no caso probabilístico
