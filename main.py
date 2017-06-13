@@ -1,3 +1,4 @@
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 """
     File name: main.py
@@ -40,6 +41,7 @@ class Cliente(Thread):
         while True:
             frame = self.__camadaenlace.gerar_frame()
             frame = self.__camadaenlace.aplicar_ruido(frame)
+            frame = self.__camadaenlace.check_sum(frame)
             msg = ''.join([str(bit) for bit in frame])
             self.__camadafisica.enviar_msg(msg)
             sleep(0.5)

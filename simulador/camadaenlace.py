@@ -59,7 +59,7 @@ class CamadaEnlace(object):
         """
         if random() <= self.__prob_rajada:
             tamanho_rajada = choice(self.__intervalo_rajada)  # escolhe um tamanho aleatório para a rajada
-            rajada = [randint(0, 1) for i in range(tamanho_rajada)]  # gera o conteúdo da rajada
+            rajada = [randint(0, 1) for _ in range(tamanho_rajada)]  # gera o conteúdo da rajada
             posicao_insercao = randint(0,
                                        self.__tamanho_frame - 1)  # escolhe aleatóriamente um lugar para inserir a rajada
             frame_final = frame[:posicao_insercao] + rajada + frame[
@@ -68,12 +68,24 @@ class CamadaEnlace(object):
 
         return frame
 
+    def __adicionar_checksum(self, frame, checksum):
+        """
+        Insere no final do frame, 6 bits correspondentes ao valor checksum recebido
+        :param frame(list[int]): frame original
+        :param checksum(int): valor inteiro do checksum correspondente ao frame
+        :return(list[int]): frame com o checksum adicionado
+        """
+
+        frame += [int(bit) for bit in bin(checksum)[2:].zfill(6)]
+
+        return frame
+
     def gerar_frame(self):
         """
         Gera a mensagem original
         :return(list[int]): Retorna a mensagem original 
         """
-        frame = [randint(0, 1) for i in range(self.__tamanho_frame)]  # gera a mensagem original
+        frame = [randint(0, 1) for _ in range(self.__tamanho_frame)]  # gera a mensagem original
         return frame
 
     def aplicar_ruido(self, frame):
@@ -89,3 +101,18 @@ class CamadaEnlace(object):
 
         frame_final = self.__aplicar_rajada(frame_prob_adiconar)
         return frame_final
+
+    def check_sum(self, frame):
+        """
+        Gera o valor checksum para o frame recebido
+        Checksum, neste caso, é a soma dos bits do frame
+        :param frame(list[int]): Quadro original sem inserção do checksum 
+        :return(list[int]): Quadro final com o checksum 
+        """
+
+        soma = sum(frame)
+
+        return self.__adicionar_checksum(frame, soma)
+
+
+
