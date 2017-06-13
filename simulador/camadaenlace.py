@@ -76,8 +76,7 @@ class CamadaEnlace(object):
         :return(list[int]): frame com o checksum adicionado
         """
 
-        for bit in bin(checksum)[2:].zfill(6):
-            frame.append(int(bit))
+        frame += [int(bit) for bit in bin(checksum)[2:].zfill(6)]
 
         return frame
 
@@ -111,9 +110,7 @@ class CamadaEnlace(object):
         :return(list[int]): Quadro final com o checksum 
         """
 
-        soma = 0
-        for bit in frame:
-            soma += bit
+        soma = sum(frame)
 
         return self.__adicionar_checksum(frame, soma)
 
