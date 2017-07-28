@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
     File name: main.py
-    Author: Ana Moraes, Daniela Pralon, Eduardo Andrews, João Paulo Reis Alvarenga, Manoel Stilpen, Patrick Rosa
+    Author: Ana Daniela Pralon, Eduardo Andrews, João Paulo Reis Alvarenga, Manoel Stilpen, Patrick Rosa
     Date created: 5/30/2017
     Data last modified: 6/12/2017
     Python version: 2.7
@@ -22,7 +22,7 @@ class Servidor(Thread):
     """
     def __init__(self, tipo, porta):
         Thread.__init__(self)
-        self.__camadafisica = CamadaFisica(tipo, '127.0.0.1', porta, False)
+        self.__camadafisica = CamadaFisica(tipo, '127.0.0.1', porta, False, 0.01)
 
     def run(self):
         self.__camadafisica.servir()
@@ -34,7 +34,7 @@ class Cliente(Thread):
     """
     def __init__(self, tipo, endereco, porta):
         Thread.__init__(self)
-        self.__camadafisica = CamadaFisica(tipo, endereco, porta, False)
+        self.__camadafisica = CamadaFisica(tipo, endereco, porta, False, 0.01)
         self.__camadaenlace = CamadaEnlace(0.1, 0.01, 0.01, 32, (10, 20))
 
     def run(self):
@@ -56,3 +56,4 @@ if __name__ == '__main__':
 
     thread_cliente.join()
     thread_servidor.join()
+

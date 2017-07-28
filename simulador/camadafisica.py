@@ -9,6 +9,7 @@
 """
 
 import socket
+import random
 from threading import Thread
 from datetime import datetime
 
@@ -18,13 +19,14 @@ class CamadaFisica(object):
     Simulação da camada física, responsável por controlar as mensagens
     """
 
-    def __init__(self, transporte, host, porta, use_5b_encode):
+    def __init__(self, transporte, host, porta, use_5b_encode, prob_inversao):
         """
         Função init da classe
         :param transporte(string): Tipo da camada TCP ou UDP
         :param host(string): Endereço de IP para subir ou conectar ao servidor 
         :param porta(int): Porta
         :param use_5b_encode(bool): True caso for usar codificacao 4b/5b
+        :param prob_inversao(float): probabilidade de um bit ser transmitido com erro
         :return None
         """
         self.__transporte = transporte
@@ -38,6 +40,7 @@ class CamadaFisica(object):
                          '1010': '10110', '1011': '10111', '1100': '11010', '1101': '11011', '1110': '11100',
                          '1111': '11101'}
         self.__use_5b_encode = use_5b_encode
+        self.__prob_inversao = prob_inversao
 
     def servir(self):
         """
@@ -128,6 +131,22 @@ class CamadaFisica(object):
 
         return new
 
+    def __aplica_erro_inversao(self, msg):
+        """
+        Aplica na mensagem a probabilidade de erro de transmissao 
+        :param msg: mensagem onde pode ocorrer o erro
+        :return: nova mensagem, com erro
+        """
+        msg = list(msg)
+        for i in range(len(msg)):
+            rand = random.uniform(0, 1)
+            if rand < self.__prob_inversao:
+                msg[i] = ('1', '0')[int(msg[i])]
+
+        msg = ''.join(msg)
+        return msg
+
+
     def enviar_msg(self, msg):
         """
         Trata uma mensagem a ser enviada, direcionando ao protocolo certo
@@ -138,6 +157,8 @@ class CamadaFisica(object):
 
         if self.__use_5b_encode:
              msg = self.__convert_to_5b(msg)
+
+        msg = self.__aplica_erro_inversao(msg)
 
         if self.__transporte == 'TCP':
             return self.__enviar_tcp(msg)
