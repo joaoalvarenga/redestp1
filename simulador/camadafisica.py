@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
     File name: camadafisica.py
-    Author: Daniela Pralon, Eduardo Andrews, João Paulo Reis Alvarenga, Manoel Stilpen, Patrick Rosa
+    Author: Ana Moraes, Daniela Pralon, Eduardo Andrews, João Paulo Reis Alvarenga, Manoel Stilpen, Patrick Rosa
     Date created: 5/30/2017
     Data last modified: 6/30/2017
     Python version: 2.7
