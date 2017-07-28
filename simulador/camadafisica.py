@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
     File name: camadafisica.py
-    Author: Daniela Pralon, Eduardo Andrews, João Paulo Reis Alvarenga, Manoel Stilpen, Marina Lima, Patrick Rosa
+    Author: Daniela Pralon, Eduardo Andrews, João Paulo Reis Alvarenga, Manoel Stilpen, Patrick Rosa
     Date created: 5/30/2017
     Data last modified: 6/30/2017
     Python version: 2.7
@@ -18,12 +18,13 @@ class CamadaFisica(object):
     Simulação da camada física, responsável por controlar as mensagens
     """
 
-    def __init__(self, transporte, host, porta):
+    def __init__(self, transporte, host, porta, use_5b_encode):
         """
         Função init da classe
         :param transporte(string): Tipo da camada TCP ou UDP
         :param host(string): Endereço de IP para subir ou conectar ao servidor 
-        :param porta(int): Porta 
+        :param porta(int): Porta
+        :param use_5b_encode(bool): True caso for usar codificacao 4b/5b
         :return None
         """
         self.__transporte = transporte
@@ -31,6 +32,12 @@ class CamadaFisica(object):
         self.__porta = porta
         tipo_socket = {'UDP': socket.SOCK_DGRAM, 'TCP': socket.SOCK_STREAM}
         self.__socket = socket.socket(socket.AF_INET, tipo_socket[transporte])
+
+        self.__map_4b = {'0000': '11110', '0001': '01001', '0010': '10100', '0011': '10101', '0100': '01010',
+                         '0101': '01011', '0110': '01110', '0111': '01111', '1000': '10010', '1001': '10011',
+                         '1010': '10110', '1011': '10111', '1100': '11010', '1101': '11011', '1110': '11100',
+                         '1111': '11101'}
+        self.__use_5b_encode = use_5b_encode
 
     def servir(self):
         """
@@ -98,10 +105,28 @@ class CamadaFisica(object):
     def __enviar_udp(self, msg):
         """
         Envia uma mensagem utilizando o protocolo UDP
-        :param msg(string): Mensagem para ser enviado 
+        :param: msg(string): Mensagem para ser enviado 
         :return: None
         """
         self.__socket.sendto(msg, (self.__host, self.__porta))
+
+    def __convert_to_5b(self, msg):
+        """
+        Converte mensagem em padrao 4b para padrao 5b
+        Caso a mensagem não tenha tamanho multiplo de 4, então são adicionados 0 ao final da mensagem
+        :param: msg(string): Mensagem para converter
+        :return: Mensagem convertida
+        """
+
+        # adiciona 0 ao fim da mensagem
+        if len(msg) % 4 != 0:
+            msg = msg + ('0' * (4-(len(msg) % 4)))
+
+        new = ""
+        for i in range(0, len(msg), 4):
+            new += self.__map_4b[msg[i:i+4]]
+
+        return new
 
     def enviar_msg(self, msg):
         """
@@ -110,6 +135,10 @@ class CamadaFisica(object):
         :return: None
         """
         print("[Cliente][{}] - {} - [{}]".format(datetime.now(), msg, len(msg)))
+
+        if self.__use_5b_encode:
+             msg = self.__convert_to_5b(msg)
+
         if self.__transporte == 'TCP':
             return self.__enviar_tcp(msg)
 
