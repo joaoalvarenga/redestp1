@@ -114,5 +114,14 @@ class CamadaEnlace(object):
 
         return self.__adicionar_checksum(frame, soma)
 
+    def paridade(self, frame):
+        """
+        Aplica Paridade par no frame
+        :param frame: quadro para ser inserido o bit de paridade 
+        :return: frame com o bit de paridade inserido
+        """
 
-
+        # verificando se a quantidade de 1 e par ou impar
+        n = frame.count('1') % 2
+        frame += ('0', '1')[n]
+        return frame
