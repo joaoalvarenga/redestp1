@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
     File name: camadaenlace.py
-    Author: Daniela Pralon, Eduardo Andrews, João Paulo Reis Alvarenga, Manoel Stilpen, Marina Lima, Patrick Rosa, Eduardo Andrews
+    Author: Ana Moraes, Daniela Pralon, Eduardo Andrews, João Paulo Reis Alvarenga, Manoel Stilpen, Patrick Rosa
     Date created: 5/30/2017
     Data last modified: 6/12/2017
     Python version: 2.7
@@ -114,5 +114,14 @@ class CamadaEnlace(object):
 
         return self.__adicionar_checksum(frame, soma)
 
+    def paridade(self, frame):
+        """
+        Aplica Paridade par no frame
+        :param frame: quadro para ser inserido o bit de paridade 
+        :return: frame com o bit de paridade inserido
+        """
 
-
+        # verificando se a quantidade de 1 e par ou impar
+        n = frame.count('1') % 2
+        frame += ('0', '1')[n]
+        return frame
