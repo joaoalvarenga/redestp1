@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """
     File name: camadaenlace.py
-    Author: Daniela Pralon, Eduardo Andrews, João Paulo Reis Alvarenga, Manoel Stilpen, Marina Lima, Patrick Rosa, Eduardo Andrews
+    Author: Ana Moraes, Daniela Pralon, Eduardo Andrews, João Paulo Reis Alvarenga, Manoel Stilpen, Patrick Rosa
     Date created: 5/30/2017
-    Data last modified: 6/12/2017
+    Data last modified: 3/08/2017
     Python version: 2.7
     License: GPL
 """
@@ -25,10 +25,13 @@ class CamadaEnlace(object):
         :param invervalo_rajada(tuple(int,int)): Invervalo de tamanhos da rajada
         :return: None
         """
-        self.__prob_inversao = prob_inversao  # probabilidade de inverter um bit
-        self.__prob_adicao = prob_adicao  # probabilidade de adicionar um bit
-        self.__prob_rajada = prob_rajada  # probabilidade da rajada
-        self.__tamanho_frame = tamanho_frame  # tamanho do quadro
+        #TODO: O tipo de tratamento	de erro	na camada de enlace	deve ser configurável.
+        #TODO: Implementar os dois protocolos de janela deslizante.
+
+        self.__prob_inversao = prob_inversao    # probabilidade de inverter um bit
+        self.__prob_adicao = prob_adicao        # probabilidade de adicionar um bit
+        self.__prob_rajada = prob_rajada        # probabilidade da rajada
+        self.__tamanho_frame = tamanho_frame    # tamanho do quadro
         self.__intervalo_rajada = intervalo_rajada
 
     def __inverter_bit(self, bit):  # inversor de bit
@@ -80,6 +83,14 @@ class CamadaEnlace(object):
 
         return frame
 
+    def __calcula_check_sum(self, frame):
+        """
+        Calcula o valor do checksum para o frame recebido
+        :param frame: 
+        :return: retorna o valor checksum do frame
+        """
+        return sum(frame)
+
     def gerar_frame(self):
         """
         Gera a mensagem original
@@ -102,17 +113,78 @@ class CamadaEnlace(object):
         frame_final = self.__aplicar_rajada(frame_prob_adiconar)
         return frame_final
 
-    def check_sum(self, frame):
+    def gera_check_sum(self, frame):
         """
-        Gera o valor checksum para o frame recebido
+        Gera o valor checksum para o frame recebido.
         Checksum, neste caso, é a soma dos bits do frame
         :param frame(list[int]): Quadro original sem inserção do checksum 
         :return(list[int]): Quadro final com o checksum 
         """
 
-        soma = sum(frame)
+        soma = self.__calcula_check_sum(frame)
 
         return self.__adicionar_checksum(frame, soma)
 
+    def verifica_check_sum(self, frame):
+        """
+        Realiza o teste do checksum, caso os valores sejam iguais, então, a mensagem não possui erros.
+        :param frame: frame que se deseja verificar o checksum
+        :return: True caso a mensagem não contenha erros
+        """
 
+        # pega os 6 ultimos bits da mensagem
+        checksum = sum(frame[-6:])
 
+        # calcula o checksum com base na mensagem recebida
+        checksum_recebido = self.__calcula_check_sum(frame[:-6])
+
+        # caso o checksum calculado e o checksum retirado do frame sejam iguais, entao, não há erro
+        if checksum == checksum_recebido:
+            return True
+
+        return False
+
+    def gera_paridade(self, frame):
+        """
+        Aplica Paridade par no frame, adicionando o bit 0 caso a quantidade de bits 1 seja par
+        e adicionando o bit 1 caso a quantidade de bits 1 seja impar
+        :param frame: quadro para ser inserido o bit de paridade 
+        :return: frame com o bit de paridade inserido
+        """
+
+        # verificando se a quantidade de 1 e par ou impar
+        n = frame.count(1) % 2
+        # adicionando no final do frame 0 ou 1
+        frame.append((0, 1)[n])
+
+        return frame
+
+    def verifica_paridade(self, frame):
+        """
+        Realiza a verificacao de paridade        
+        :param frame(list[int]): mensagem para verificar
+        :return: True caso a paridade esteja ok
+        """
+
+        # pega o ultimo bit do frame, o bit que indica a paridade
+        n = frame.count(1) % 2
+
+        if n == 0:
+            return True
+
+        return False
+
+    def gera_hamming(self, frame):
+        """
+        Aplica o código de Hamming no frame recebido
+        :param frame: frame que se deseja aplicar o código de hamming
+        :return: frame com os bits de hamming inseridos
+        """
+
+        n = 0
+        pos_verifications_bits = [1]
+        while pos_verifications_bits[-1] <= len(frame):
+            pos_verifications_bits.append(2 ** len(pos_verifications_bits))
+
+        pos_verifications_bits[:] = [index - 1 for index in pos_verifications_bits]
+        print pos_verifications_bits
