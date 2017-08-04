@@ -3,7 +3,7 @@
     File name: camadaenlace.py
     Author: Ana Moraes, Daniela Pralon, Eduardo Andrews, João Paulo Reis Alvarenga, Manoel Stilpen, Patrick Rosa
     Date created: 5/30/2017
-    Data last modified: 6/12/2017
+    Data last modified: 3/08/2017
     Python version: 2.7
     License: GPL
 """
@@ -25,6 +25,9 @@ class CamadaEnlace(object):
         :param invervalo_rajada(tuple(int,int)): Invervalo de tamanhos da rajada
         :return: None
         """
+        #TODO: O tipo de tratamento	de erro	na camada de enlace	deve ser configurável.
+        #TODO: Implementar os dois protocolos de janela deslizante.
+
         self.__prob_inversao = prob_inversao    # probabilidade de inverter um bit
         self.__prob_adicao = prob_adicao        # probabilidade de adicionar um bit
         self.__prob_rajada = prob_rajada        # probabilidade da rajada

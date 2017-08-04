@@ -9,5 +9,6 @@
 """
 from .camadaenlace import CamadaEnlace
 from .camadafisica import CamadaFisica
+from .camadarede import CamadaRede
 
 __all__ = [CamadaEnlace, CamadaFisica]

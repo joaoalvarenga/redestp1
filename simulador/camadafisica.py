@@ -3,7 +3,7 @@
     File name: camadafisica.py
     Author: Ana Moraes, Daniela Pralon, Eduardo Andrews, João Paulo Reis Alvarenga, Manoel Stilpen, Patrick Rosa
     Date created: 5/30/2017
-    Data last modified: 6/30/2017
+    Data last modified: 3/08/2017
     Python version: 2.7
     License: GPL
 """
