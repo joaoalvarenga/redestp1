@@ -20,6 +20,7 @@ class CamadaRede(object):
         self.__nconexoes = 0
         self.__nhosts = 0
         self.__connections = defaultdict(list)  # edges
+        self.__pesos = {}
 
         self.__read_graph()
 
@@ -28,6 +29,7 @@ class CamadaRede(object):
             self.__nhosts, self.__nedges = file.readline().split()
 
             for _ in range(int(self.__nconexoes)):
-                src, dest = file.readline().split()
+                src, dest, weight = file.readline().split()
                 self.__connections[src].append(dest)
                 self.__connections[dest].append(src)
+                self.__pesos[(src, dest)] = int(weight)
