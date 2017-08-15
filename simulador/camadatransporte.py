@@ -19,6 +19,8 @@ class CamadaTransporte(object):
 
     def enviar(self, pacote):
         """
+        Encapsula a mensagem recebida pela camada de aplicação em segmentos
+        
         pacote["ip"]: string contendo ip
         pacote["porta"]: string contendo a porta
         pacote["mensagem"]: string contendo a mensagem a ser enviada
@@ -33,9 +35,12 @@ class CamadaTransporte(object):
 
         mensagem += list(format(int(pacote['porta']), 'b').zfill(40)) # converte o numero da porta em binario
 
+        # caso seja necessario particionar os pacotes
         if len(pacote['mensagem']) > 256:
+			# TODO: necessario particionar o pacote
+			mensagem += list(''.join(format(ord(p), 'b').zfill(8) for p in pacote['mensagem']))
 
         else:
             mensagem += list(''.join(format(ord(p), 'b').zfill(8) for p in pacote['mensagem']))
 
-        print mensagem
+        return mensagem
