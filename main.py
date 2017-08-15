@@ -11,6 +11,7 @@
 
 from simulador import CamadaFisica
 from simulador import CamadaEnlace
+from simulador import CamadaTransporte
 
 from threading import Thread
 from time import sleep
@@ -56,4 +57,3 @@ if __name__ == '__main__':
 
     thread_cliente.join()
     thread_servidor.join()
-
