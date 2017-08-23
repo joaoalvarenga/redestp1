@@ -187,4 +187,5 @@ class CamadaEnlace(object):
             pos_verifications_bits.append(2 ** len(pos_verifications_bits))
 
         pos_verifications_bits[:] = [index - 1 for index in pos_verifications_bits]
-        print pos_verifications_bits
+        print(pos_verifications_bits)
+
