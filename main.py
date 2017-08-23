@@ -12,7 +12,7 @@
 from simulador import CamadaFisica
 from simulador import CamadaEnlace
 from simulador import Configuration
-from simulador import Host, Roteador
+from simulador import HostConsumer, Roteador
 
 from threading import Thread
 from time import sleep
@@ -67,12 +67,13 @@ class Manager(Thread):
         Thread.__init__(self)
         self.__hosts = {}
         self.__routers = []
+        self.__enlace = CamadaEnlace(0.1, 0.01, 0.01, 32, (10, 20))
 
         self.__messages = [
-            {'source': 1, 'target': 0, 'msg': 'Olá'},
-            {'source': 0, 'target': 1, 'msg': 'Olá, como vai?'},
-            {'source': 1, 'target': 0, 'msg': 'Vou bem e você?'},
-            {'source': 0, 'target': 1, 'msg': 'Bem também'}
+            {'source': 1, 'target': 0, 'msg': ''.join(map(str,self.__enlace.gera_check_sum([int(i) for i in ''.join(['{0:08b}'.format(c) for c in map(ord, 'Olá')])])))},
+            {'source': 0, 'target': 1, 'msg': ''.join(map(str,self.__enlace.gera_check_sum([int(i) for i in ''.join(['{0:08b}'.format(c) for c in map(ord, 'Olá, como vai?')])])))},
+            {'source': 1, 'target': 0, 'msg': ''.join(map(str,self.__enlace.gera_check_sum([int(i) for i in ''.join(['{0:08b}'.format(c) for c in map(ord, 'Vou bem e você?')])])))},
+            {'source': 0, 'target': 1, 'msg': ''.join(map(str,self.__enlace.gera_check_sum([int(i) for i in ''.join(['{0:08b}'.format(c) for c in map(ord, 'Bem também')])])))}
         ]
 
         self.load_network()
@@ -83,7 +84,7 @@ class Manager(Thread):
             self.__hosts[host['name']] = {
                 'port': host['port'],
                 'address': host['address'],
-                'thread': Host(host['port'])
+                'thread': HostConsumer(host['port'])
             }
             self.__hosts[host['name']]['thread'].start()
 
@@ -99,9 +100,26 @@ class Manager(Thread):
             for host_name in self.__hosts:
                 if self.__hosts[host_name]['address'] == msg['source']:
                     self.__hosts[host_name]['thread'].send_message(msg['target'], msg['msg'])
+                    for host_name_2 in self.__hosts:
+                        if self.__hosts[host_name_2]['address'] == msg['target']:
+                            p = self.__hosts[host_name_2]['thread'].collect_packets()
+                            while len(p) == 0:
+                                p = self.__hosts[host_name_2]['thread'].collect_packets()
+                            # print(p)
+                            print(self.__enlace.verifica_check_sum([int(i) for i in p[0].split(' - ')[1]]))
 
+        print('morri')
+        for router in self.__routers:
+            router.killme()
+            router.join()
+
+        for host_name in self.__hosts:
+            self.__hosts[host_name]['thread'].killme()
+            self.__hosts[host_name]['thread'].join()
 
 
 if __name__ == '__main__':
     manager = Manager()
     manager.start()
+
+    manager.join()

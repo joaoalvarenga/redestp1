@@ -34,6 +34,7 @@ class CamadaFisica(object):
         self.__porta = porta
         tipo_socket = {'UDP': socket.SOCK_DGRAM, 'TCP': socket.SOCK_STREAM}
         self.__socket = socket.socket(socket.AF_INET, tipo_socket[transporte])
+        self.__socket.settimeout(2)
 
         self.__map_4b = {'0000': '11110', '0001': '01001', '0010': '10100', '0011': '10101', '0100': '01010',
                          '0101': '01011', '0110': '01110', '0111': '01111', '1000': '10010', '1001': '10011',
@@ -74,7 +75,7 @@ class CamadaFisica(object):
             msg = conexao.recv(1024)
             if not msg:
                 break
-            print("[Servidor][{}] {} - {} - [{}]".format(datetime.now(), cliente, msg, len(msg)))
+            #print("[Servidor][{}] {} - {} - [{}]".format(datetime.now(), cliente, msg, len(msg)))
         conexao.close()
 
     def __servir_tcp(self):
@@ -104,7 +105,10 @@ class CamadaFisica(object):
         """
         # msg, cliente = self.__socket.recvfrom(1024)
         # print("[Servidor][{}] {} - {} - [{}]".format(datetime.now(), cliente, msg, len(msg)))
-        return self.__socket.recvfrom(1024)
+        try:
+            return self.__socket.recvfrom(1024)
+        except:
+            return None, None
 
     def __enviar_tcp(self, msg):
         """
@@ -166,7 +170,7 @@ class CamadaFisica(object):
         :param msg: Mensagem a ser enviada
         :return: None
         """
-        print("[Cliente][{}] - {} - [{}]".format(datetime.now(), msg, len(msg)))
+        #print("[Cliente][{}] - {} - [{}]".format(datetime.now(), msg, len(msg)))
 
         if self.__use_5b_encode:
             msg = self.__convert_to_5b(msg)
@@ -175,5 +179,6 @@ class CamadaFisica(object):
 
         # if self.__transporte == 'TCP':
         #     return self.__enviar_tcp(msg)
+        # print(msg)
 
-        return self.__enviar_udp(msg, cliente)
+        return self.__enviar_udp(msg.encode('utf-8'), cliente)

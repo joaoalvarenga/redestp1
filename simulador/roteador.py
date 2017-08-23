@@ -22,14 +22,17 @@ class Roteador(Thread):
     def adicionar_conexao(self, conexao_ip, conexao_porta):
         self.__conexoes.append(CamadaFisica('UDP', conexao_ip, conexao_porta, False, 0))
 
+    def killme(self):
+        self.__killme = True
+
     def run(self):
         while not self.__killme:
             for i, conexao in enumerate(self.__conexoes):
-                print('Enviando send')
-                conexao.enviar_msg(b'SEND')
-                print('Esperando resposta')
+                # print('Enviando send')
+                conexao.enviar_msg('SEND')
+                # print('Esperando resposta')
                 msg, cliente = conexao.receber()
-                #print(msg)
+                ## print(msg)
                 try:
                     msg = json.loads(msg.decode('utf-8'))
                     if type(msg) == dict:
@@ -39,12 +42,12 @@ class Roteador(Thread):
                     pass
             for pacote in self.__fila_pacotes:
                 conexao = self.__conexoes[pacote['target']]
-                print('Enviando recv')
-                conexao.enviar_msg(b'RECV')
-                print('Enviando msg')
-                conexao.enviar_msg('{} - {}'.format(pacote['source'], pacote['msg']).encode('utf-8'))
+                # print('Enviando recv')
+                conexao.enviar_msg('RECV')
+                # print('Enviando msg')
+                conexao.enviar_msg('{} - {}'.format(pacote['source'], pacote['msg']))
             self.__fila_pacotes = []
             sleep(1)
-
+        print('morri router')
 
 
