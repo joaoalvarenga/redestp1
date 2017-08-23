@@ -10,5 +10,7 @@
 from .camadaenlace import CamadaEnlace
 from .camadafisica import CamadaFisica
 from .camadarede import CamadaRede
+from .host import Host
+from .roteador import Roteador
 
-__all__ = [CamadaEnlace, CamadaFisica, CamadaRede]
+__all__ = [CamadaEnlace, CamadaFisica, CamadaRede, Host, Roteador]

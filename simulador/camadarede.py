@@ -12,3 +12,7 @@ class CamadaRede(object):
     """
     Simulacao da Camada de Rede
     """
+    def __init__(self, ip, ):
+        self.__ip = ip
+
+        self.__conexoes = []
