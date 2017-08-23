@@ -12,6 +12,7 @@
 from simulador import CamadaFisica
 from simulador import CamadaEnlace
 from simulador import CamadaTransporte
+from simulador import CamadaAplicacao
 
 from threading import Thread
 from time import sleep
@@ -49,11 +50,15 @@ class Cliente(Thread):
 
 
 if __name__ == '__main__':
-    thread_servidor = Servidor('UDP', 6666)
-    thread_cliente = Cliente('UDP', '127.0.0.1', 6666)
+#    thread_servidor = Servidor('UDP', 6666)
+#    thread_cliente = Cliente('UDP', '127.0.0.1', 6666)
 
-    thread_servidor.start()
-    thread_cliente.start()
+#    thread_servidor.start()
+#    thread_cliente.start()
 
-    thread_cliente.join()
-    thread_servidor.join()
+#    thread_cliente.join()
+#    thread_servidor.join()
+
+    app = CamadaAplicacao()
+    cmd = app.receber()
+    cmd = app.receber()
