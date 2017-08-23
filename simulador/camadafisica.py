@@ -176,4 +176,4 @@ class CamadaFisica(object):
         # if self.__transporte == 'TCP':
         #     return self.__enviar_tcp(msg)
 
-        return self.__enviar_udp(msg, cliente)
+        return self.__enviar_udp(msg.encode('utf-8'), cliente)
