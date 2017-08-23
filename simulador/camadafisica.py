@@ -49,11 +49,19 @@ class CamadaFisica(object):
         """
         self.__socket.bind((self.__host, self.__porta))
 
-        if self.__transporte == 'TCP':
-            self.__socket.listen(1)
-            return self.__servir_tcp()
+        # if self.__transporte == 'TCP':
+        #     self.__socket.listen(1)
+        #     return self.__servir_tcp()
+        #
+        # return self.__servir_udp()
 
-        return self.__servir_udp()
+    def receber(self):
+        """
+        Receber uma mensagem
+        :return:
+        """
+
+        return self.__receber_msg_udp()
 
     def __receber_msg_tcp(self, conexao, cliente):
         """
@@ -94,8 +102,9 @@ class CamadaFisica(object):
         Trata a mensagem enviado por um cliente UDP
         :return: None
         """
-        msg, cliente = self.__socket.recvfrom(1024)
-        print("[Servidor][{}] {} - {} - [{}]".format(datetime.now(), cliente, msg, len(msg)))
+        # msg, cliente = self.__socket.recvfrom(1024)
+        # print("[Servidor][{}] {} - {} - [{}]".format(datetime.now(), cliente, msg, len(msg)))
+        return self.__socket.recvfrom(1024)
 
     def __enviar_tcp(self, msg):
         """
@@ -105,13 +114,17 @@ class CamadaFisica(object):
         """
         self.__socket.send(msg)
 
-    def __enviar_udp(self, msg):
+    def __enviar_udp(self, msg, cliente):
         """
         Envia uma mensagem utilizando o protocolo UDP
-        :param: msg(string): Mensagem para ser enviado 
+        :param: msg(string): Mensagem para ser enviado
+        :param cliente(tuple): Caso seja um servidor, direcionar a mensagem para o cliente correto
         :return: None
         """
-        self.__socket.sendto(msg, (self.__host, self.__porta))
+        if cliente is None:
+            self.__socket.sendto(msg, (self.__host, self.__porta))
+        else:
+            self.__socket.sendto(msg, cliente)
 
     def __convert_to_5b(self, msg):
         """
@@ -123,11 +136,11 @@ class CamadaFisica(object):
 
         # adiciona 0 ao fim da mensagem
         if len(msg) % 4 != 0:
-            msg = msg + ('0' * (4-(len(msg) % 4)))
+            msg = msg + ('0' * (4 - (len(msg) % 4)))
 
         new = ""
         for i in range(0, len(msg), 4):
-            new += self.__map_4b[msg[i:i+4]]
+            new += self.__map_4b[msg[i:i + 4]]
 
         return new
 
@@ -146,21 +159,21 @@ class CamadaFisica(object):
         msg = ''.join(msg)
         return msg
 
-
-    def enviar_msg(self, msg):
+    def enviar_msg(self, msg, cliente = None):
         """
         Trata uma mensagem a ser enviada, direcionando ao protocolo certo
+        :param cliente: Caso seja um servidor, devolve a mensagem para o cliente
         :param msg: Mensagem a ser enviada
         :return: None
         """
         print("[Cliente][{}] - {} - [{}]".format(datetime.now(), msg, len(msg)))
 
         if self.__use_5b_encode:
-             msg = self.__convert_to_5b(msg)
+            msg = self.__convert_to_5b(msg)
 
-        msg = self.__aplica_erro_inversao(msg)
+        #msg = self.__aplica_erro_inversao(msg)
 
-        if self.__transporte == 'TCP':
-            return self.__enviar_tcp(msg)
+        # if self.__transporte == 'TCP':
+        #     return self.__enviar_tcp(msg)
 
-        return self.__enviar_udp(msg)
+        return self.__enviar_udp(msg.encode('utf-8'), cliente)

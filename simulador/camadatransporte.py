@@ -37,8 +37,8 @@ class CamadaTransporte(object):
 
         # caso seja necessario particionar os pacotes
         if len(pacote['mensagem']) > 256:
-			# TODO: necessario particionar o pacote
-			mensagem += list(''.join(format(ord(p), 'b').zfill(8) for p in pacote['mensagem']))
+            # TODO: necessario particionar o pacote
+            mensagem += list(''.join(format(ord(p), 'b').zfill(8) for p in pacote['mensagem']))
 
         else:
             mensagem += list(''.join(format(ord(p), 'b').zfill(8) for p in pacote['mensagem']))
