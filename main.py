@@ -13,6 +13,7 @@ from simulador import CamadaFisica
 from simulador import CamadaEnlace
 from simulador import Configuration
 from simulador import HostConsumer, Roteador
+from simulador import CamadaTransporte
 
 from threading import Thread
 from time import sleep
@@ -116,7 +117,6 @@ class Manager(Thread):
         for host_name in self.__hosts:
             self.__hosts[host_name]['thread'].killme()
             self.__hosts[host_name]['thread'].join()
-
 
 if __name__ == '__main__':
     manager = Manager()
