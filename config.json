@@ -1,0 +1,23 @@
+{
+    "network": {
+      "hosts": [
+        {
+          "name": "host1",
+          "address": 0,
+          "port": 6667
+        },
+        {
+          "name": "host2",
+          "address": 1,
+          "port": 6668
+        }
+      ],
+      "routers": [
+        {
+          "name": "router1",
+          "port": 6669,
+          "connections": ["host1", "host2"]
+        }
+      ]
+    }
+}
