@@ -10,7 +10,8 @@ from simulador import CamadaEnlace, CamadaFisica
 class Roteador(Thread):
     def __init__(self, porta):
         self.__enlace = CamadaEnlace(0.1, 0.01, 0.01, 32, (10, 20))
-        self.__conexoes = [CamadaFisica('UDP', '127.0.0.1', 6666, False, 0), CamadaFisica('UDP', '127.0.0.1', 6667, False, 0)]
+        # self.__conexoes = [CamadaFisica('UDP', '127.0.0.1', 6666, False, 0), CamadaFisica('UDP', '127.0.0.1', 6667, False, 0)]
+        self.__conexoes = []
 
         self.__fila_pacotes = []
 
@@ -28,7 +29,7 @@ class Roteador(Thread):
                 conexao.enviar_msg(b'SEND')
                 print('Esperando resposta')
                 msg, cliente = conexao.receber()
-                print(msg)
+                #print(msg)
                 try:
                     msg = json.loads(msg.decode('utf-8'))
                     if type(msg) == dict:
