@@ -133,7 +133,7 @@ class CamadaEnlace(object):
         """
 
         # pega os 6 ultimos bits da mensagem
-        checksum = sum(frame[-6:])
+        checksum = int("".join(str(x) for x in (frame[-6:])),2)
 
         # calcula o checksum com base na mensagem recebida
         checksum_recebido = self.__calcula_check_sum(frame[:-6])
