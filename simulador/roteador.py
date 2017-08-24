@@ -34,10 +34,8 @@ class Roteador(Thread):
                 msg, cliente = conexao.receber()
                 ## print(msg)
                 try:
-                    msg = json.loads(msg.decode('utf-8'))
-                    if type(msg) == dict:
-                        msg['source'] = i
-                        self.__fila_pacotes.append(msg)
+                    pacote = {'msg': msg.decode('utf-8'), 'target': int(msg[:8], 2), 'source': i}
+                    self.__fila_pacotes.append(pacote)
                 except:
                     pass
             for pacote in self.__fila_pacotes:

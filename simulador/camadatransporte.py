@@ -17,6 +17,12 @@ class CamadaTransporte(object):
     def __init__(self):
         mensagem = []
 
+    def gerar_pacote(self, destino, mensagem):
+        mensagem_ascii = map(ord, mensagem) # converter mensagem para ASCII
+        mensagem_binario = ''.join(['{0:08b}'.format(c) for c in mensagem_ascii]) # converter mensagem para binario
+        pacote = '{0:08b}'.format(destino) + mensagem_binario
+        return pacote
+
     def enviar(self, pacote):
         """
         Encapsula a mensagem recebida pela camada de aplicação em segmentos

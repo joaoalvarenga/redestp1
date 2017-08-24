@@ -79,7 +79,7 @@ class CamadaEnlace(object):
         :return(list[int]): frame com o checksum adicionado
         """
 
-        frame += [int(bit) for bit in bin(checksum)[2:].zfill(6)]
+        frame += [int(bit) for bit in '{:06b}'.format(checksum)]
 
         return frame
 
@@ -89,7 +89,7 @@ class CamadaEnlace(object):
         :param frame: 
         :return: retorna o valor checksum do frame
         """
-        return sum(frame)
+        return sum(frame) % 64 # mod de 2^6
 
     def gerar_frame(self):
         """
@@ -133,7 +133,7 @@ class CamadaEnlace(object):
         """
 
         # pega os 6 ultimos bits da mensagem
-        checksum = int("".join(str(x) for x in (frame[-6:])),2)
+        checksum = int(''.join(str(x) for x in (frame[-6:])), 2)
 
         # calcula o checksum com base na mensagem recebida
         checksum_recebido = self.__calcula_check_sum(frame[:-6])

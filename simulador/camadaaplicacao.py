@@ -7,36 +7,36 @@
     Python version: 2.7
     License: GPL
 """
+from threading import Thread
 
-import json
+from simulador import HostConsumer, CamadaEnlace, CamadaTransporte
 
-# mensagem['porta'], mensagem['ip'], mensagem['mensagem']
 
-class CamadaAplicacao(object):
+class CamadaAplicacao(Thread):
     """
     Simulacao da Camada de Aplicacao
     """
 
-    def __init__(self):
-        #self.__config_file = 'config.json'
-        #self.__config = json.load(open(self.__config_file))
-        self.__messages = [{'ip':'192.168.1.117', 'porta':'22', 'msg':'eai, td bem?'},
-                            {'ip':'192.168.1.17', 'porta':'22','msg':'eai, bora fechar?'}]
+    def __init__(self, nome, endereco, porta, messages):
+        self.__name = nome
+        self.__endereco = endereco
+        self.__host = HostConsumer(porta)
+        self.__enlace = CamadaEnlace(0.1, 0.01, 0.01, 32, (10, 20))
+        self.__transporte = CamadaTransporte()
+        self.__messages = messages
+        # messages = [{'action': 'recv'}, {'action': 'send', 'target': 0, 'msg': 'Olá, como vai?'}]
+        Thread.__init__(self)
 
-    def enviar(self):
-        """
-        Realiza leitura das mensagens no arquivo 
-        :return: dict com informacoes parseadas
-        """
+        self.__host.start()
 
-        if len(self.__messages) > 0:
-            ip = self.__messages[0]['ip']
-            port = self.__messages[0]['porta']
-            msg = self.__messages[0]['msg']
-
-            self.__messages.pop(0)
-
-            return {'ip':ip, 'porta':port, 'mensagem':msg}
-
-        return {}
-        
+    def run(self):
+        for message in self.__messages:
+            if message['action'] == 'recv':
+                pacotes = self.__host.collect_packets()
+                while len(pacotes) == 0:
+                    pacotes = self.__host.collect_packets()
+                print('{} - {}'.format(self.__nome, pacotes[0]))
+            if message['action'] == 'send':
+                pacote = self.__transporte.gerar_pacote(message['target'], message['msg'])
+                pacote = ''.join(map(str, self.__enlace.gera_check_sum([int(i) for i in pacote])))
+                self.__host.send_message(pacote)

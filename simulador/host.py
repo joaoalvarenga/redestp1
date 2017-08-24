@@ -22,9 +22,8 @@ class HostConsumer(Thread):
     def killme(self):
         self.__killme = True
 
-    def send_message(self, target, msg):
-        packet = {'target': target, 'msg': msg}
-        self.__pacotes_enviar.append(json.dumps(packet))
+    def send_message(self, packet):
+        self.__pacotes_enviar.append(packet)
 
     def collect_packets(self):
         packets = self.__pacotes_recebidos
@@ -52,7 +51,13 @@ class HostConsumer(Thread):
                 # print("Recebendo pacote do roteador")
                 msg, cliente = self.__fisica.receber()
                 self.__pacotes_recebidos.append(msg.decode('utf-8'))
-                print('Pacote recebido {}'.format(msg.decode('utf-8')))
+                msg = msg.decode('utf-8')
+                msg_sender = msg.split(' - ')[0]
+                msg = msg.split(' - ')[1]
+                msg = msg[8:-6]
+                msg = ''.join([chr(int(msg[i:i+8], 2))for i in range(0, len(msg), 8)])
+
+                print('Pacote recebido {} - {}'.format(msg_sender, msg))
         print('morri host')
 
 

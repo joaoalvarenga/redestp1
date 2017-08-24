@@ -70,12 +70,17 @@ class Manager(Thread):
         self.__hosts = {}
         self.__routers = []
         self.__enlace = CamadaEnlace(0.1, 0.01, 0.01, 32, (10, 20))
+        self.__transporte = CamadaTransporte()
 
         self.__messages = [
-            {'source': 1, 'target': 0, 'msg': ''.join(map(str,self.__enlace.gera_check_sum([int(i) for i in ''.join(['{0:08b}'.format(c) for c in map(ord, 'Olá')])])))},
-            {'source': 0, 'target': 1, 'msg': ''.join(map(str,self.__enlace.gera_check_sum([int(i) for i in ''.join(['{0:08b}'.format(c) for c in map(ord, 'Olá, como vai?')])])))},
-            {'source': 1, 'target': 0, 'msg': ''.join(map(str,self.__enlace.gera_check_sum([int(i) for i in ''.join(['{0:08b}'.format(c) for c in map(ord, 'Vou bem e você?')])])))},
-            {'source': 0, 'target': 1, 'msg': ''.join(map(str,self.__enlace.gera_check_sum([int(i) for i in ''.join(['{0:08b}'.format(c) for c in map(ord, 'Bem também')])])))}
+            {'source': 1, 'target': 0, 'msg': ''.join(map(str, self.__enlace.gera_check_sum(
+                [int(i) for i in ''.join(self.__transporte.gerar_pacote(0, 'Olá'))])))},
+            {'source': 0, 'target': 1, 'msg': ''.join(map(str, self.__enlace.gera_check_sum(
+                [int(i) for i in ''.join(self.__transporte.gerar_pacote(1, 'Olá, como vai você?'))])))},
+            {'source': 1, 'target': 0, 'msg': ''.join(map(str, self.__enlace.gera_check_sum(
+                [int(i) for i in ''.join(self.__transporte.gerar_pacote(0, 'Vou bem e você?'))])))},
+            {'source': 0, 'target': 1, 'msg': ''.join(map(str, self.__enlace.gera_check_sum(
+                [int(i) for i in ''.join(self.__transporte.gerar_pacote(1, 'Bem também.'))])))}
         ]
 
         self.load_network()
@@ -101,7 +106,7 @@ class Manager(Thread):
         for msg in self.__messages:
             for host_name in self.__hosts:
                 if self.__hosts[host_name]['address'] == msg['source']:
-                    self.__hosts[host_name]['thread'].send_message(msg['target'], msg['msg'])
+                    self.__hosts[host_name]['thread'].send_message(msg['msg'])
                     for host_name_2 in self.__hosts:
                         if self.__hosts[host_name_2]['address'] == msg['target']:
                             p = self.__hosts[host_name_2]['thread'].collect_packets()
@@ -118,6 +123,7 @@ class Manager(Thread):
         for host_name in self.__hosts:
             self.__hosts[host_name]['thread'].killme()
             self.__hosts[host_name]['thread'].join()
+
 
 if __name__ == '__main__':
     manager = Manager()
