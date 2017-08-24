@@ -40,7 +40,11 @@ class CamadaAplicacao(Thread):
         pacotes = self.__host.collect_packets()
         while len(pacotes) == 0:
             pacotes = self.__host.collect_packets()
-        return pacotes
+        return [self.__transporte.desenpacotar_mensagem(p) for p in pacotes]
+
+    def enviar_pacote(self, destino, mensagem):
+        pacote = self.__transporte.gerar_pacote(self.__endereco, destino, mensagem)
+        self.__host.send_message(pacote)
 
     def run(self):
         for message in self.__messages:
@@ -48,7 +52,8 @@ class CamadaAplicacao(Thread):
                 pacotes = self.__host.collect_packets()
                 while len(pacotes) == 0:
                     pacotes = self.__host.collect_packets()
-                print('{} - {}'.format(self.__nome, self.__transporte.desenpacotar_mensagem(pacotes[0])))
+                origem, destino, mensagem = self.__transporte.desenpacotar_mensagem(pacotes[0])
+                print('{} - {}'.format(self.__nome, mensagem))
             if message['action'] == 'send':
                 pacote = self.__transporte.gerar_pacote(self.__endereco, message['target'], message['msg'])
 

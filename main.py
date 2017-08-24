@@ -60,8 +60,8 @@ from time import sleep
 #
 #     thread_cliente.join()
 #     thread_servidor.join()
-
-
+from simulador.cliente import Cliente
+from simulador.servidor import Servidor
 
 
 class Manager(Thread):
@@ -77,7 +77,10 @@ class Manager(Thread):
     def load_network(self):
         network = Configuration.options.get_network()
         for host in network['hosts']:
-            self.__hosts[host['name']] = CamadaAplicacao(host['name'], host['address'], host['port'], host['script'])
+            if 'type' in host:
+                self.__hosts[host['name']] = Servidor(host['name'], host['address'], host['port'])
+            else:
+                self.__hosts[host['name']] = Cliente(host['name'], host['address'], host['port'], host['server'], host['script'])
             self.__hosts[host['name']].start()
 
         for router in network['routers']:

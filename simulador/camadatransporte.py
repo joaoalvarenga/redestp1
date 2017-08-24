@@ -25,8 +25,10 @@ class CamadaTransporte(object):
         return pacote
 
     def desenpacotar_mensagem(self, pacote):
+        origem = int(pacote[:8],2)
+        destino = int(pacote[8:16], 2)
         msg = pacote[16:-6]
-        return''.join([chr(int(msg[i:i + 8], 2)) for i in range(0, len(msg), 8)])
+        return origem, destino, ''.join([chr(int(msg[i:i + 8], 2)) for i in range(0, len(msg), 8)])
 
     def enviar(self, pacote):
         """

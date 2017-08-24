@@ -2,9 +2,22 @@
   "network": {
     "hosts": [
       {
+        "name": "server1",
+        "address": 8,
+        "port": 6690,
+        "type": "server"
+      },
+      {
+        "name": "server2",
+        "address": 10,
+        "port": 6691,
+        "type": "server"
+      },
+      {
         "name": "host1",
         "address": 0,
         "port": 6667,
+        "server": 8,
         "script": [
           {
             "action": "send",
@@ -28,6 +41,7 @@
         "name": "host2",
         "address": 1,
         "port": 6668,
+        "server": 8,
         "script": [
           {
             "action": "recv"
@@ -51,6 +65,7 @@
         "name": "host3",
         "address": 2,
         "port": 6669,
+        "server": 10,
         "script": [
           {
             "action": "send",
@@ -74,6 +89,7 @@
         "name": "host4",
         "address": 3,
         "port": 6670,
+        "server": 10,
         "script": [
           {
             "action": "recv"
@@ -99,6 +115,7 @@
         "name": "router1",
         "port": 6569,
         "connections": [
+          "server1",
           "host1",
           "host2"
         ]
@@ -107,6 +124,7 @@
         "name": "router2",
         "port": 6570,
         "connections": [
+          "server2",
           "host3",
           "host4"
         ]

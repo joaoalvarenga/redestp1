@@ -13,12 +13,13 @@ from threading import Thread
 import json
 from time import sleep
 
-from simulador import CamadaEnlace, CamadaFisica
+from simulador import CamadaEnlace, CamadaFisica, CamadaTransporte
 
 
 class Roteador(Thread):
     def __init__(self, porta):
         self.__enlace = CamadaEnlace(0.1, 0.01, 0.01, 32, (10, 20))
+        self.__transporte = CamadaTransporte()
         self.__conexoes = {}
 
         self.__fila_pacotes = []
@@ -52,7 +53,8 @@ class Roteador(Thread):
                         checksum = self.__enlace.verifica_check_sum([int(i) for i in msg])
                     conexao.enviar_msg('OK')
                     try:
-                        pacote = {'msg': msg, 'target': int(msg[:8], 2)}
+                        source, target, foo = self.__transporte.desenpacotar_mensagem(msg)
+                        pacote = {'msg': msg, 'target': target}
                         self.__fila_pacotes.append(pacote)
                     except:
                         pass
