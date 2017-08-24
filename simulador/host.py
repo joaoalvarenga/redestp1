@@ -18,7 +18,7 @@ class HostConsumer(Thread):
     def __init__(self, porta):
         self.__lock = Lock()
         self.__fisica = CamadaFisica('UDP', '0.0.0.0', porta, False, 0)
-        self.__enlace = CamadaEnlace(0.0001, 0.00001, 0.0001, 32, (10, 20))
+        self.__enlace = CamadaEnlace(0.000, 0.0000, 0.000, 32, (10, 20))
         self.__fisica.servir()
         Thread.__init__(self)
 

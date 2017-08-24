@@ -48,6 +48,7 @@ class Cliente(Thread):
 
     def run(self):
         while not self.__online:
+            print(self.__endereco_servidor)
             self.__aplicacao.enviar_pacote(self.__endereco_servidor, json.dumps({'code': 'LOGIN'}))
             self.__pacotes += self.__aplicacao.coletar_pacotes()
             for pacote in self.__pacotes:

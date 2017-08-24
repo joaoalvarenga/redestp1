@@ -88,6 +88,8 @@ class Manager(Thread):
             for connection in router['connections']:
                 r.adicionar_conexao('127.0.0.1', self.__hosts[connection].get_porta(),
                                     self.__hosts[connection].get_endereco())
+            for router_connection in dict(router['routers']).items():
+                r.adicionar_conexao_router('127.0.0.1', router_connection[1], router_connection[0])
             r.start()
             self.__routers.append(r)
 

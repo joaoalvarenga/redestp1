@@ -34,7 +34,7 @@ class CamadaFisica(object):
         self.__porta = porta
         tipo_socket = {'UDP': socket.SOCK_DGRAM, 'TCP': socket.SOCK_STREAM}
         self.__socket = socket.socket(socket.AF_INET, tipo_socket[transporte])
-        self.__socket.settimeout(2)
+        # self.__socket.settimeout(2)
 
         self.__map_4b = {'0000': '11110', '0001': '01001', '0010': '10100', '0011': '10101', '0100': '01010',
                          '0101': '01011', '0110': '01110', '0111': '01111', '1000': '10010', '1001': '10011',
