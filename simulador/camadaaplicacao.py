@@ -7,36 +7,54 @@
     Python version: 2.7
     License: GPL
 """
+from threading import Thread
 
-import json
+from simulador import HostConsumer, CamadaEnlace, CamadaTransporte
 
-# mensagem['porta'], mensagem['ip'], mensagem['mensagem']
 
-class CamadaAplicacao(object):
+class CamadaAplicacao(Thread):
     """
     Simulacao da Camada de Aplicacao
     """
 
-    def __init__(self):
-        #self.__config_file = 'config.json'
-        #self.__config = json.load(open(self.__config_file))
-        self.__messages = [{'ip':'192.168.1.117', 'porta':'22', 'msg':'eai, td bem?'},
-                            {'ip':'192.168.1.17', 'porta':'22','msg':'eai, bora fechar?'}]
+    def __init__(self, nome, endereco, porta, messages):
+        self.__nome = nome
+        self.__endereco = endereco
+        self.__porta = porta
+        self.__host = HostConsumer(porta)
 
-    def enviar(self):
-        """
-        Realiza leitura das mensagens no arquivo 
-        :return: dict com informacoes parseadas
-        """
+        self.__transporte = CamadaTransporte()
+        self.__messages = messages
+        # messages = [{'action': 'recv'}, {'action': 'send', 'target': 0, 'msg': 'Olá, como vai?'}]
+        Thread.__init__(self)
 
-        if len(self.__messages) > 0:
-            ip = self.__messages[0]['ip']
-            port = self.__messages[0]['porta']
-            msg = self.__messages[0]['msg']
+        self.__host.start()
 
-            self.__messages.pop(0)
+    def get_porta(self):
+        return self.__porta
 
-            return {'ip':ip, 'porta':port, 'mensagem':msg}
+    def get_endereco(self):
+        return self.__endereco
 
-        return {}
-        
+    def coletar_pacotes(self):
+        pacotes = self.__host.collect_packets()
+        while len(pacotes) == 0:
+            pacotes = self.__host.collect_packets()
+        return [self.__transporte.desenpacotar_mensagem(p) for p in pacotes]
+
+    def enviar_pacote(self, destino, mensagem):
+        pacote = self.__transporte.gerar_pacote(self.__endereco, destino, mensagem)
+        self.__host.send_message(pacote)
+
+    def run(self):
+        for message in self.__messages:
+            if message['action'] == 'recv':
+                pacotes = self.__host.collect_packets()
+                while len(pacotes) == 0:
+                    pacotes = self.__host.collect_packets()
+                origem, destino, mensagem = self.__transporte.desenpacotar_mensagem(pacotes[0])
+                print('{} - {}'.format(self.__nome, mensagem))
+            if message['action'] == 'send':
+                pacote = self.__transporte.gerar_pacote(self.__endereco, message['target'], message['msg'])
+
+                self.__host.send_message(pacote)
