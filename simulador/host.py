@@ -39,7 +39,7 @@ class HostConsumer(Thread):
             if __msg is None:
                 continue
             if __msg.decode('UTF-8') == 'SEND':  # pergunta ao host se ele tem algo para mandar
-                print('Enviando mensagem com pacotes')
+                #print('Enviando mensagem com pacotes')
                 if len(self.__pacotes_enviar) > 0:
                     self.__fisica.enviar_msg(self.__pacotes_enviar.pop(), __cliente)
                 else:
@@ -51,13 +51,7 @@ class HostConsumer(Thread):
                 # print("Recebendo pacote do roteador")
                 msg, cliente = self.__fisica.receber()
                 self.__pacotes_recebidos.append(msg.decode('utf-8'))
-                msg = msg.decode('utf-8')
-                msg_sender = msg.split(' - ')[0]
-                msg = msg.split(' - ')[1]
-                msg = msg[8:-6]
-                msg = ''.join([chr(int(msg[i:i+8], 2))for i in range(0, len(msg), 8)])
-
-                print('Pacote recebido {} - {}'.format(msg_sender, msg))
+                # print('Pacote recebido {} - {}'.format(msg_sender, msg))
         print('morri host')
 
 

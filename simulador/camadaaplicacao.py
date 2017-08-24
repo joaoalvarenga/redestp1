@@ -18,8 +18,9 @@ class CamadaAplicacao(Thread):
     """
 
     def __init__(self, nome, endereco, porta, messages):
-        self.__name = nome
+        self.__nome = nome
         self.__endereco = endereco
+        self.__porta = porta
         self.__host = HostConsumer(porta)
         self.__enlace = CamadaEnlace(0.1, 0.01, 0.01, 32, (10, 20))
         self.__transporte = CamadaTransporte()
@@ -29,13 +30,19 @@ class CamadaAplicacao(Thread):
 
         self.__host.start()
 
+    def get_porta(self):
+        return self.__porta
+
+    def get_endereco(self):
+        return self.__endereco
+
     def run(self):
         for message in self.__messages:
             if message['action'] == 'recv':
                 pacotes = self.__host.collect_packets()
                 while len(pacotes) == 0:
                     pacotes = self.__host.collect_packets()
-                print('{} - {}'.format(self.__nome, pacotes[0]))
+                print('{} - {}'.format(self.__nome, self.__transporte.desenpacotar_mensagem(pacotes[0])))
             if message['action'] == 'send':
                 pacote = self.__transporte.gerar_pacote(message['target'], message['msg'])
                 pacote = ''.join(map(str, self.__enlace.gera_check_sum([int(i) for i in pacote])))

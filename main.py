@@ -88,42 +88,19 @@ class Manager(Thread):
     def load_network(self):
         network = Configuration.options.get_network()
         for host in network['hosts']:
-            self.__hosts[host['name']] = {
-                'port': host['port'],
-                'address': host['address'],
-                'thread': HostConsumer(host['port'])
-            }
-            self.__hosts[host['name']]['thread'].start()
+            self.__hosts[host['name']] = CamadaAplicacao(host['name'], host['address'], host['port'], host['script'])
+            self.__hosts[host['name']].start()
 
         for router in network['routers']:
             r = Roteador(router['port'])
             for connection in router['connections']:
-                r.adicionar_conexao('127.0.0.1', self.__hosts[connection]['port'])
+                r.adicionar_conexao('127.0.0.1', self.__hosts[connection].get_porta(),
+                                    self.__hosts[connection].get_endereco())
             r.start()
             self.__routers.append(r)
 
     def run(self):
-        for msg in self.__messages:
-            for host_name in self.__hosts:
-                if self.__hosts[host_name]['address'] == msg['source']:
-                    self.__hosts[host_name]['thread'].send_message(msg['msg'])
-                    for host_name_2 in self.__hosts:
-                        if self.__hosts[host_name_2]['address'] == msg['target']:
-                            p = self.__hosts[host_name_2]['thread'].collect_packets()
-                            while len(p) == 0:
-                                p = self.__hosts[host_name_2]['thread'].collect_packets()
-                            # print(p)
-                            print(self.__enlace.verifica_check_sum([int(i) for i in p[0].split(' - ')[1]]))
-
-        print('morri')
-        for router in self.__routers:
-            router.killme()
-            router.join()
-
-        for host_name in self.__hosts:
-            self.__hosts[host_name]['thread'].killme()
-            self.__hosts[host_name]['thread'].join()
-
+        pass
 
 if __name__ == '__main__':
     manager = Manager()

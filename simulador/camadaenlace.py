@@ -137,8 +137,6 @@ class CamadaEnlace(object):
 
         # calcula o checksum com base na mensagem recebida
         checksum_recebido = self.__calcula_check_sum(frame[:-6])
-        print(checksum)
-        print(checksum_recebido)
 
         # caso o checksum calculado e o checksum retirado do frame sejam iguais, entao, não há erro
         if checksum == checksum_recebido:

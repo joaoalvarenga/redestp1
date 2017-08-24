@@ -1,23 +1,116 @@
 {
-    "network": {
-      "hosts": [
-        {
-          "name": "host1",
-          "address": 0,
-          "port": 6667
-        },
-        {
-          "name": "host2",
-          "address": 1,
-          "port": 6668
-        }
-      ],
-      "routers": [
-        {
-          "name": "router1",
-          "port": 6669,
-          "connections": ["host1", "host2"]
-        }
-      ]
-    }
+  "network": {
+    "hosts": [
+      {
+        "name": "host1",
+        "address": 0,
+        "port": 6667,
+        "script": [
+          {
+            "action": "send",
+            "target": 1,
+            "msg": "Olá"
+          },
+          {
+            "action": "recv"
+          },
+          {
+            "action": "send",
+            "target": 1,
+            "msg": "Vou bem e você?"
+          },
+          {
+            "action": "recv"
+          }
+        ]
+      },
+      {
+        "name": "host2",
+        "address": 1,
+        "port": 6668,
+        "script": [
+          {
+            "action": "recv"
+          },
+          {
+            "action": "send",
+            "target": 0,
+            "msg": "Olá, como vai?"
+          },
+          {
+            "action": "recv"
+          },
+          {
+            "action": "send",
+            "target": 0,
+            "msg": "Bem também"
+          }
+        ]
+      },
+      {
+        "name": "host3",
+        "address": 2,
+        "port": 6669,
+        "script": [
+          {
+            "action": "send",
+            "target": 3,
+            "msg": "Olá"
+          },
+          {
+            "action": "recv"
+          },
+          {
+            "action": "send",
+            "target": 3,
+            "msg": "Vou bem e você?"
+          },
+          {
+            "action": "recv"
+          }
+        ]
+      },
+      {
+        "name": "host4",
+        "address": 3,
+        "port": 6670,
+        "script": [
+          {
+            "action": "recv"
+          },
+          {
+            "action": "send",
+            "target": 2,
+            "msg": "Olá, como vai?"
+          },
+          {
+            "action": "recv"
+          },
+          {
+            "action": "send",
+            "target": 2,
+            "msg": "Bem também"
+          }
+        ]
+      }
+    ],
+    "routers": [
+      {
+        "name": "router1",
+        "port": 6569,
+        "connections": [
+          "host1",
+          "host2"
+        ]
+      },
+      {
+        "name": "router2",
+        "port": 6570,
+        "connections": [
+          "host3",
+          "host4"
+        ]
+      }
+    ]
+  }
 }

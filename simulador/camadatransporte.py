@@ -23,6 +23,10 @@ class CamadaTransporte(object):
         pacote = '{0:08b}'.format(destino) + mensagem_binario
         return pacote
 
+    def desenpacotar_mensagem(self, pacote):
+        msg = pacote[8:-6]
+        return''.join([chr(int(msg[i:i + 8], 2)) for i in range(0, len(msg), 8)])
+
     def enviar(self, pacote):
         """
         Encapsula a mensagem recebida pela camada de aplicação em segmentos
