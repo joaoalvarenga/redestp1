@@ -1,4 +1,12 @@
 # -*- coding: utf-8 -*-
+"""
+    File name: host.py
+    Author: Ana Moraes, Daniela Pralon, Eduardo Andrews, João Paulo Reis Alvarenga, Manoel Stilpen, Patrick Rosa
+    Date created: 08/23/2017
+    Data last modified: 08/23/2017
+    Python version: 3
+    License: GPL
+"""
 import json, logging
 from threading import Thread, Lock
 from queue import Queue
@@ -10,6 +18,7 @@ class HostConsumer(Thread):
     def __init__(self, porta):
         self.__lock = Lock()
         self.__fisica = CamadaFisica('UDP', '0.0.0.0', porta, False, 0)
+        self.__enlace = CamadaEnlace(0.001, 0.0001, 0.001, 32, (10, 20))
         self.__fisica.servir()
         Thread.__init__(self)
 
@@ -18,6 +27,7 @@ class HostConsumer(Thread):
 
         self.__pacotes_recebidos = []
         self.__pacotes_enviar = []
+        self.__ultimo_pacote = None
 
     def killme(self):
         self.__killme = True
@@ -30,27 +40,49 @@ class HostConsumer(Thread):
         self.__pacotes_recebidos = []
         return packets
 
+    def processar_pacote(self, pacote):
+        pacote = self.__enlace.gera_check_sum([int(i) for i in pacote])
+        pacote = ''.join(map(str, self.__enlace.aplicar_ruido(pacote)))
+        return pacote
+
+    def enviar_pacote(self, pacote, cliente, ack=False):
+        if ack:
+            self.__fisica.enviar_msg(pacote, cliente)
+        else:
+            self.__fisica.enviar_msg(self.processar_pacote(pacote), cliente)
+
     def run(self):
         while not self.__killme:
             # print('Esperando roteador')
-            __msg, __cliente = self.__fisica.receber()
+            __msg, __cliente = self.__fisica.receber(ack=True)
             # self.__get_shared_values()
             # # print(str(__msg))
             if __msg is None:
                 continue
-            if __msg.decode('UTF-8') == 'SEND':  # pergunta ao host se ele tem algo para mandar
+            if __msg == 'SEND_AGAIN':
+                if self.__ultimo_pacote is None:
+                    self.enviar_pacote('', __cliente)
+                else:
+                    self.enviar_pacote(self.__ultimo_pacote, __cliente)
+                    msg, cliente = self.__fisica.receber(ack=True)
+                    while msg != 'OK':
+                        self.enviar_pacote(self.__ultimo_pacote, __cliente)
+                        msg, cliente = self.__fisica.receber()
+                self.__ultimo_pacote = None
+            if __msg == 'SEND':  # pergunta ao host se ele tem algo para mandar
                 #print('Enviando mensagem com pacotes')
                 if len(self.__pacotes_enviar) > 0:
-                    self.__fisica.enviar_msg(self.__pacotes_enviar.pop(), __cliente)
+                    self.__ultimo_pacote = self.__pacotes_enviar.pop()
+                    self.enviar_pacote(self.__ultimo_pacote, __cliente)
                 else:
-                    self.__fisica.enviar_msg('', __cliente)
+                    self.enviar_pacote('', __cliente, ack=True)
                 # self.__get_shared_values()
                 # self.__set_shared_values('')
 
-            if __msg.decode('UTF-8') == 'RECV':  # pede ao host para que ele receba um pacote
+            if __msg == 'RECV':  # pede ao host para que ele receba um pacote
                 # print("Recebendo pacote do roteador")
                 msg, cliente = self.__fisica.receber()
-                self.__pacotes_recebidos.append(msg.decode('utf-8'))
+                self.__pacotes_recebidos.append(msg)
                 # print('Pacote recebido {} - {}'.format(msg_sender, msg))
         print('morri host')
 

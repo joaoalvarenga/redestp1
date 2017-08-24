@@ -17,14 +17,15 @@ class CamadaTransporte(object):
     def __init__(self):
         mensagem = []
 
-    def gerar_pacote(self, destino, mensagem):
+    def gerar_pacote(self, origem, destino, mensagem):
         mensagem_ascii = map(ord, mensagem) # converter mensagem para ASCII
         mensagem_binario = ''.join(['{0:08b}'.format(c) for c in mensagem_ascii]) # converter mensagem para binario
         pacote = '{0:08b}'.format(destino) + mensagem_binario
+        pacote = '{0:08b}'.format(origem) + pacote
         return pacote
 
     def desenpacotar_mensagem(self, pacote):
-        msg = pacote[8:-6]
+        msg = pacote[16:-6]
         return''.join([chr(int(msg[i:i + 8], 2)) for i in range(0, len(msg), 8)])
 
     def enviar(self, pacote):
