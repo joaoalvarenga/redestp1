@@ -14,6 +14,7 @@ from simulador import CamadaEnlace
 from simulador import Configuration
 from simulador import HostConsumer, Roteador
 from simulador import CamadaTransporte
+from simulador import CamadaAplicacao
 
 from threading import Thread
 from time import sleep
